@@ -1,0 +1,157 @@
+# ldlr
+
+`ldlr` is an R interface for Linear Discriminative Learning (LDL). It
+keeps data preparation, validation, model objects, diagnostics, and
+reporting in R, while delegating computationally intensive operations to
+Julia and [JudiLing.jl](https://github.com/MegamindHenry/JudiLing.jl).
+Users work with R functions and ordinary R matrices; no Julia syntax is
+required.
+
+The package supports comprehension and production mappings, end-state,
+frequency-informed and incremental learning, explicit train/test
+evaluation, leave-one-out and k-fold cross-validation, orthographic
+n-gram cues, LDL measures and diagnostics, and optional word-form path
+finding.
+
+## Installation
+
+``` r
+
+install.packages(c("JuliaConnectoR", "remotes"))
+remotes::install_github("dosc91/ldlr")
+library(ldlr)
+
+setup_julia(install_julia = TRUE)
+ldlr_status()
+```
+
+[`setup_julia()`](https://dosc91.github.io/ldlr/reference/setup_julia.md)
+can install Julia, creates an isolated Julia environment for `ldlr`, and
+installs the required Julia packages. If automatic detection fails, pass
+the Julia executable explicitly:
+
+``` r
+
+setup_julia(julia = "C:/path/to/julia.exe", install_julia = FALSE)
+```
+
+## Minimal example
+
+``` r
+
+words <- c("walk", "walked", "talk", "talked")
+cues <- make_ortho_trigrams(words, sparse = FALSE)
+
+# S normally comes from distributional vectors such as fastText.
+set.seed(1)
+S <- matrix(rnorm(length(words) * 20), nrow = length(words),
+            dimnames = list(words, paste0("s", 1:20)))
+
+comprehension <- compute_comprehension(cues, S, learning = "endstate")
+production <- compute_production(S, cues, learning = "endstate")
+
+summary(comprehension)
+head(compute_measures(comprehension))
+```
+
+The R-facing workflow is `C -> S_hat` for comprehension and `S -> C_hat`
+for production. Internally, end-state and frequency-informed mappings
+call `JudiLing.make_transform_matrix()`; incremental mappings call
+`JudiLing.wh_learn()` and, when frequencies are supplied,
+`JudiLing.make_learn_seq()`.
+
+## Documentation
+
+The [documentation site](https://dosc91.github.io/ldlr/) contains a
+complete first analysis, guides to learning methods, measures,
+cross-validation, the R-to-Julia architecture, troubleshooting, and a
+function reference. Each function is documented first as an R operation
+and then in terms of its underlying JudiLing or JudiLingMeasures
+implementation. Native `ldlr` calculations are identified explicitly.
+
+`ldlr` follows the terminology of
+[JudiLingMeasures.jl](https://github.com/MegamindHenry/JudiLingMeasures.jl).
+Where an upstream measure has a known correctness or edge-case problem,
+the package uses a guarded Julia implementation and documents that
+difference.
+
+## License
+
+MIT. See `LICENSE.md`.
+
+# Package index
+
+## Package overview
+
+- [`ldlr`](https://dosc91.github.io/ldlr/reference/ldlr-package.md)
+  [`ldlr-package`](https://dosc91.github.io/ldlr/reference/ldlr-package.md)
+  : Linear Discriminative Learning from R
+
+## Setup and data input
+
+- [`setup_julia()`](https://dosc91.github.io/ldlr/reference/setup_julia.md)
+  [`ldlr_status()`](https://dosc91.github.io/ldlr/reference/setup_julia.md)
+  : Configure the Julia backend
+- [`load_fasttext_vectors()`](https://dosc91.github.io/ldlr/reference/load_fasttext_vectors.md)
+  : Load vectors in fastText text format
+
+## Cue matrices
+
+- [`make_ortho_trigrams()`](https://dosc91.github.io/ldlr/reference/make_ortho_trigrams.md)
+  [`make_combined_ortho_trigrams()`](https://dosc91.github.io/ldlr/reference/make_ortho_trigrams.md)
+  : Create orthographic n-gram cues
+
+## Comprehension and production
+
+- [`compute_comprehension()`](https://dosc91.github.io/ldlr/reference/compute_mappings.md)
+  [`compute_production()`](https://dosc91.github.io/ldlr/reference/compute_mappings.md)
+  : Compute LDL comprehension and production mappings
+- [`save_ldlr_model()`](https://dosc91.github.io/ldlr/reference/model_persistence.md)
+  [`load_ldlr_model()`](https://dosc91.github.io/ldlr/reference/model_persistence.md)
+  : Save and load portable ldlr objects
+
+## Evaluation and cross-validation
+
+- [`compute_comprehension_loo()`](https://dosc91.github.io/ldlr/reference/cross_validation.md)
+  [`compute_production_loo()`](https://dosc91.github.io/ldlr/reference/cross_validation.md)
+  [`compute_comprehension_cv()`](https://dosc91.github.io/ldlr/reference/cross_validation.md)
+  [`compute_production_cv()`](https://dosc91.github.io/ldlr/reference/cross_validation.md)
+  [`summary(`*`<ldlr_cv>`*`)`](https://dosc91.github.io/ldlr/reference/cross_validation.md)
+  [`as.data.frame(`*`<ldlr_cv>`*`)`](https://dosc91.github.io/ldlr/reference/cross_validation.md)
+  [`fitted(`*`<ldlr_cv>`*`)`](https://dosc91.github.io/ldlr/reference/cross_validation.md)
+  : Cross-validated LDL predictions
+
+## Measures and diagnostics
+
+- [`available_measures()`](https://dosc91.github.io/ldlr/reference/compute_measures.md)
+  [`compute_measures()`](https://dosc91.github.io/ldlr/reference/compute_measures.md)
+  : Compute LDL measures
+- [`check_measure_values()`](https://dosc91.github.io/ldlr/reference/check_measure_values.md)
+  : Diagnose problematic measure columns
+
+## Word-form paths
+
+- [`produce_forms()`](https://dosc91.github.io/ldlr/reference/produce_forms.md)
+  : Produce ordered forms
+
+# Articles
+
+### Start here
+
+- [Getting started with
+  ldlr](https://dosc91.github.io/ldlr/articles/getting-started.md):
+
+### Analysis
+
+- [Learning
+  methods](https://dosc91.github.io/ldlr/articles/learning-methods.md):
+- [Measures and
+  diagnostics](https://dosc91.github.io/ldlr/articles/measures-and-diagnostics.md):
+- [Evaluation and
+  cross-validation](https://dosc91.github.io/ldlr/articles/cross-validation.md):
+
+### Technical details
+
+- [R and Julia
+  architecture](https://dosc91.github.io/ldlr/articles/julia-backend.md):
+- [Troubleshooting](https://dosc91.github.io/ldlr/articles/troubleshooting.md):

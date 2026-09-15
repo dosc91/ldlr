@@ -1,0 +1,111 @@
+# Learning methods
+
+Both
+[`compute_comprehension()`](https://dosc91.github.io/ldlr/reference/compute_mappings.md)
+and
+[`compute_production()`](https://dosc91.github.io/ldlr/reference/compute_mappings.md)
+expose the same three learning methods. The only difference is the
+direction of the mapping.
+
+## End-state learning
+
+``` r
+
+comp <- compute_comprehension(cues, S, learning = "endstate", shift = 0.02)
+prod <- compute_production(S, cues, learning = "endstate", shift = 0.02)
+```
+
+End-state learning estimates all rows simultaneously. In R, `ldlr`
+validates and aligns `C` and `S`, sends numeric matrices to Julia, and
+returns the mapping and predictions as an R object. Julia calls
+`JudiLing.make_transform_matrix(X, Y; shift = shift)`. The positive
+`shift` regularizes the inverse; `0.02` is JudiLing’s default and should
+generally be kept constant when results are compared.
+
+## Frequency-informed end-state learning
+
+Frequency-informed learning gives each type a weight. The frequency
+vector must have one non-negative value per matrix row and be in exactly
+the same order.
+
+``` r
+
+type_frequency <- aggregate(
+  frequency ~ word,
+  data = data,
+  FUN = function(x) x[1]
+)
+frequency <- type_frequency$frequency[match(rownames(S), type_frequency$word)]
+
+stopifnot(length(frequency) == nrow(S), !anyNA(frequency))
+
+comp_frequency <- compute_comprehension(
+  cues, S, learning = "frequency", frequency = frequency
+)
+```
+
+Do not exponentiate or round a logarithmic frequency variable unless
+that is the theoretically intended transformation. In Julia this calls
+the weighted method
+`JudiLing.make_transform_matrix(X, Y, frequency; shift = shift)`.
+
+## Incremental learning
+
+``` r
+
+comp_incremental <- compute_comprehension(
+  cues, S,
+  learning = "incremental",
+  frequency = frequency,
+  epochs = 2,
+  learning_rate = 0.1,
+  seed = 123
+)
+```
+
+Incremental learning updates the weights event by event. If `frequency`
+is provided, Julia calls `JudiLing.make_learn_seq()` to turn type
+frequencies into a shuffled learning sequence using `seed`. It then
+calls `JudiLing.wh_learn(X, Y; n_epochs, eta, learn_seq)`. Supply
+`learning_sequence` explicitly to control event order; explicit order
+takes precedence over a sequence generated from frequency.
+
+``` r
+
+sequence <- c(1L, 2L, 1L, 3L, 4L)
+comp_sequence <- compute_comprehension(
+  cues, S,
+  learning = "incremental",
+  learning_sequence = sequence,
+  epochs = 1,
+  learning_rate = 0.1
+)
+```
+
+The default sequence visits every row once when neither frequency nor an
+explicit sequence is supplied. End-state and incremental estimates
+answer different learning questions and should not be treated as
+interchangeable numerical solvers.
+
+## Train and test data
+
+All learning methods accept a separately supplied evaluation set:
+
+``` r
+
+cue_sets <- make_combined_ortho_trigrams(train_words, test_words)
+S_train <- vectors[train_words, , drop = FALSE]
+S_test  <- vectors[test_words, , drop = FALSE]
+
+comp_test <- compute_comprehension(
+  cue_sets$train, S_train,
+  C_test = cue_sets$test, S_test = S_test,
+  learning = "endstate"
+)
+```
+
+[`make_combined_ortho_trigrams()`](https://dosc91.github.io/ldlr/reference/make_ortho_trigrams.md)
+is native R code and guarantees identical cue columns across partitions.
+Fitting still uses the selected JudiLing operation; R computes held-out
+predictions with `%*%` and records that the model was evaluated on test
+data.
