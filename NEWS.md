@@ -1,5 +1,8 @@
 # ldlr 0.0.1
 
+* Handle a one-row final leave-one-out chunk after JuliaConnectoR simplifies
+  its row index from a length-one vector to a scalar.
+
 Initial development version.
 
 - Added automatic and manual Julia discovery and isolated package setup.

@@ -67,6 +67,11 @@ function loo_predictions_chunk(state, indices::AbstractVector{<:Integer})
     output
 end
 
+# JuliaConnectoR simplifies a length-one R integer vector to a scalar. Keep the
+# public backend boundary robust when the final chunk contains exactly one row.
+loo_predictions_chunk(state, index::Integer) =
+    loo_predictions_chunk(state, [Int(index)])
+
 function smoke_test()
     C = [1.0 0.0; 0.0 1.0; 1.0 1.0]
     S = [1.0 2.0; 2.0 1.0; 3.0 3.0]

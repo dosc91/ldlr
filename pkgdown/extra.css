@@ -1,0 +1,4 @@
+/* pkgdown already displays man/figures/logo.png in the homepage sidebar. */
+.template-home .readme-logo {
+  display: none;
+}

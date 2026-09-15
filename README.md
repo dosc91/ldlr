@@ -1,6 +1,6 @@
 # ldlr
 
-<img src="man/figures/logo.png" align="right" height="144" alt="ldlr logo" />
+<img class="readme-logo" src="man/figures/logo.png" align="right" height="144" alt="ldlr logo" />
 
 <!-- badges: start -->
 [![Version](https://img.shields.io/badge/version-0.0.1-FFA70B.svg)](https://github.com/dosc91/ldlr)
