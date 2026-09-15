@@ -65,7 +65,7 @@
 </h1></div>
 <!-- badges: start -->
 
-<p><code>ldlr</code> is an R interface for Linear Discriminative Learning (LDL). It keeps data preparation, validation, model objects, diagnostics, and reporting in R, while delegating computationally intensive operations to Julia and <a href="https://github.com/MegamindHenry/JudiLing.jl" class="external-link">JudiLing.jl</a>. Users work with R functions and ordinary R matrices; no Julia syntax is required.</p>
+<p><code>ldlr</code> is an R interface for Linear Discriminative Learning (LDL). It keeps data preparation, validation, model objects, diagnostics, and reporting in R, while delegating computationally intensive operations to Julia and <a href="https://github.com/quantling/JudiLing.jl" class="external-link">JudiLing.jl</a>. Users work with R functions and ordinary R matrices; no Julia syntax is required.</p>
 <p>The package supports comprehension and production mappings, end-state, frequency-informed and incremental learning, explicit train/test evaluation, leave-one-out and k-fold cross-validation, orthographic n-gram cues, LDL measures and diagnostics, and optional word-form path finding.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -104,7 +104,32 @@
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
 </h2>
 <p>The <a href="https://dosc91.github.io/ldlr/">documentation site</a> contains a complete first analysis, guides to learning methods, measures, cross-validation, the R-to-Julia architecture, troubleshooting, and a function reference. Each function is documented first as an R operation and then in terms of its underlying JudiLing or JudiLingMeasures implementation. Native <code>ldlr</code> calculations are identified explicitly.</p>
-<p><code>ldlr</code> follows the terminology of <a href="https://github.com/MegamindHenry/JudiLingMeasures.jl" class="external-link">JudiLingMeasures.jl</a>. Where an upstream measure has a known correctness or edge-case problem, the package uses a guarded Julia implementation and documents that difference.</p>
+<p><code>ldlr</code> follows the terminology of <a href="https://github.com/quantling/JudiLingMeasures.jl" class="external-link">JudiLingMeasures.jl</a>. Where an upstream measure has a known correctness or edge-case problem, the package uses a guarded Julia implementation and documents that difference.</p>
+</div>
+<div class="section level2">
+<h2 id="acknowledgements-and-references">Acknowledgements and references<a class="anchor" aria-label="anchor" href="#acknowledgements-and-references"></a>
+</h2>
+<p><code>ldlr</code> is an R interface to an existing Julia implementation of Linear Discriminative Learning. The underlying model-fitting and path-finding infrastructure is provided by <a href="https://github.com/quantling/JudiLing.jl" class="external-link">JudiLing.jl</a>, developed by Xuefeng Luo and Maria Heitmeier. The organization and terminology of the LDL measures follow <a href="https://github.com/quantling/JudiLingMeasures.jl" class="external-link">JudiLingMeasures.jl</a>, developed by Maria Heitmeier. Credit for the Julia implementation and the associated methodological work belongs to these original developers and contributors; <code>ldlr</code> provides an R-facing interface, validation, and corrected handling of identified measure edge cases.</p>
+<p>For the theoretical background of the Discriminative Lexicon and detailed discussion of its implementation in JudiLing, see:</p>
+<blockquote>
+<p>Heitmeier, M., Chuang, Y.-Y., &amp; Baayen, R. H. (2026). <em>The Discriminative Lexicon: Theory, Implementation in the Julia Package JudiLing, and Applications</em>. Cambridge: Cambridge University Press. ISBN 978-1-009-63461-8.</p>
+</blockquote>
+<p>Software referenced by <code>ldlr</code>:</p>
+<ul>
+<li>Luo, X., &amp; Heitmeier, M. <em>JudiLing.jl: An implementation for Linear Discriminative Learning in Julia</em>. <a href="https://github.com/quantling/JudiLing.jl" class="external-link uri">https://github.com/quantling/JudiLing.jl</a>
+</li>
+<li>Heitmeier, M. <em>JudiLingMeasures.jl: Measures for Discriminative Lexicon models developed with JudiLing</em>. <a href="https://github.com/quantling/JudiLingMeasures.jl" class="external-link uri">https://github.com/quantling/JudiLingMeasures.jl</a>
+</li>
+</ul>
+<p>BibTeX for the book:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bibtex"><code class="sourceCode bibtex"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="va">@book</span>{<span class="ot">heitmeierDiscriminativeLexiconTheory</span>,</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="dt">title</span> = {The Discriminative Lexicon: Theory, Implementation in the Julia Package JudiLing, and Applications},</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="dt">author</span> = {Heitmeier, Maria and Chuang, Yu-Ying and Baayen, R. Harald},</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="dt">year</span> = {2026},</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>  <span class="dt">publisher</span> = {Cambridge University Press},</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="dt">address</span> = {Cambridge},</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="dt">isbn</span> = {978-1-009-63461-8}</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>

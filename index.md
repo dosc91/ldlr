@@ -3,8 +3,8 @@
 `ldlr` is an R interface for Linear Discriminative Learning (LDL). It
 keeps data preparation, validation, model objects, diagnostics, and
 reporting in R, while delegating computationally intensive operations to
-Julia and [JudiLing.jl](https://github.com/MegamindHenry/JudiLing.jl).
-Users work with R functions and ordinary R matrices; no Julia syntax is
+Julia and [JudiLing.jl](https://github.com/quantling/JudiLing.jl). Users
+work with R functions and ordinary R matrices; no Julia syntax is
 required.
 
 The package supports comprehension and production mappings, end-state,
@@ -71,10 +71,54 @@ and then in terms of its underlying JudiLing or JudiLingMeasures
 implementation. Native `ldlr` calculations are identified explicitly.
 
 `ldlr` follows the terminology of
-[JudiLingMeasures.jl](https://github.com/MegamindHenry/JudiLingMeasures.jl).
+[JudiLingMeasures.jl](https://github.com/quantling/JudiLingMeasures.jl).
 Where an upstream measure has a known correctness or edge-case problem,
 the package uses a guarded Julia implementation and documents that
 difference.
+
+## Acknowledgements and references
+
+`ldlr` is an R interface to an existing Julia implementation of Linear
+Discriminative Learning. The underlying model-fitting and path-finding
+infrastructure is provided by
+[JudiLing.jl](https://github.com/quantling/JudiLing.jl), developed by
+Xuefeng Luo and Maria Heitmeier. The organization and terminology of the
+LDL measures follow
+[JudiLingMeasures.jl](https://github.com/quantling/JudiLingMeasures.jl),
+developed by Maria Heitmeier. Credit for the Julia implementation and
+the associated methodological work belongs to these original developers
+and contributors; `ldlr` provides an R-facing interface, validation, and
+corrected handling of identified measure edge cases.
+
+For the theoretical background of the Discriminative Lexicon and
+detailed discussion of its implementation in JudiLing, see:
+
+> Heitmeier, M., Chuang, Y.-Y., & Baayen, R. H. (2026). *The
+> Discriminative Lexicon: Theory, Implementation in the Julia Package
+> JudiLing, and Applications*. Cambridge: Cambridge University Press.
+> ISBN 978-1-009-63461-8.
+
+Software referenced by `ldlr`:
+
+- Luo, X., & Heitmeier, M. *JudiLing.jl: An implementation for Linear
+  Discriminative Learning in Julia*.
+  <https://github.com/quantling/JudiLing.jl>
+- Heitmeier, M. *JudiLingMeasures.jl: Measures for Discriminative
+  Lexicon models developed with JudiLing*.
+  <https://github.com/quantling/JudiLingMeasures.jl>
+
+BibTeX for the book:
+
+``` bibtex
+@book{heitmeierDiscriminativeLexiconTheory,
+  title = {The Discriminative Lexicon: Theory, Implementation in the Julia Package JudiLing, and Applications},
+  author = {Heitmeier, Maria and Chuang, Yu-Ying and Baayen, R. Harald},
+  year = {2026},
+  publisher = {Cambridge University Press},
+  address = {Cambridge},
+  isbn = {978-1-009-63461-8}
+}
+```
 
 ## License
 
