@@ -22,6 +22,8 @@ navbar:
     articles:
       text: Guides
       menu:
+      - text: Complete LDL exercise
+        href: articles/ldl-exercise.html
       - text: Learning methods
         href: articles/learning-methods.html
       - text: Measures and diagnostics
@@ -35,7 +37,7 @@ navbar:
 articles:
 - title: Start here
   navbar: ~
-  contents: [getting-started]
+  contents: [getting-started, ldl-exercise]
 - title: Analysis
   contents: [learning-methods, measures-and-diagnostics, cross-validation]
 - title: Technical details
