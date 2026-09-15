@@ -114,8 +114,86 @@ or multiple observations containing a column called
 </ol>
 <p>Replace the example file names and variable names where
 necessary.</p>
+<p>The supplied <code>dat.RData</code> uses descriptive names
+throughout:</p>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Variable</th>
+<th>Meaning</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>word</code></td>
+<td>presented word</td>
+</tr>
+<tr class="even">
+<td><code>participant_id</code></td>
+<td>participant identifier</td>
+</tr>
+<tr class="odd">
+<td><code>sentence_id</code></td>
+<td>sentence identifier</td>
+</tr>
+<tr class="even">
+<td><code>sentence_order</code></td>
+<td>position of the sentence in the presentation sequence</td>
+</tr>
+<tr class="odd">
+<td><code>question_correctness</code></td>
+<td>trial-level response to the comprehension question</td>
+</tr>
+<tr class="even">
+<td><code>question_response_time_ms</code></td>
+<td>response time for that question in milliseconds</td>
+</tr>
+<tr class="odd">
+<td><code>word_position</code></td>
+<td>position of the word within its sentence</td>
+</tr>
+<tr class="even">
+<td><code>RT</code></td>
+<td>self-paced reading time in milliseconds</td>
+</tr>
+<tr class="odd">
+<td><code>age_years</code></td>
+<td>participant age in years</td>
+</tr>
+<tr class="even">
+<td><code>english_onset_age</code></td>
+<td>age at which the participant began learning English</td>
+</tr>
+<tr class="odd">
+<td><code>sex</code></td>
+<td>participant sex</td>
+</tr>
+<tr class="even">
+<td><code>handedness</code></td>
+<td>participant handedness</td>
+</tr>
+<tr class="odd">
+<td><code>participant_accuracy</code></td>
+<td>participant’s overall comprehension accuracy</td>
+</tr>
+<tr class="even">
+<td><code>word_length</code></td>
+<td>word length in letters</td>
+</tr>
+<tr class="odd">
+<td><code>zipf_frequency</code></td>
+<td>SUBTLEX-UK frequency on the Zipf scale</td>
+</tr>
+</tbody>
+</table>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dosc91.github.io/ldlr/">ldlr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># This file loads one object called dat.</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="st">"dat.RData"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/exists.html" class="external-link">exists</a></span><span class="op">(</span><span class="st">"dat"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">is.data.frame</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Run this once after installing ldlr. It finds or installs Julia and installs</span></span>
 <span><span class="co"># the required Julia packages into ldlr's own environment.</span></span>
@@ -469,18 +547,22 @@ vector must contain one finite, non-negative value for every row of
 <strong>C</strong> and <strong>S</strong>, in their exact row order.</p>
 <p>If the original data contain multiple observations per word, first
 reduce the frequency information to one value per type. The following
-example assumes that <code>LogFreq.Zipf.</code> is constant within word
-type.</p>
+example assumes that <code>zipf_frequency</code> is constant within word
+type. A Zipf value is logarithmic; the transformation below recovers
+relative frequency weights while subtracting a constant to keep the
+numbers manageable.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dat</span><span class="op">$</span><span class="va">frequency</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">LogFreq.Zipf.</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">dat</span><span class="op">$</span><span class="va">frequency_weight</span> <span class="op">&lt;-</span> <span class="fl">10</span> <span class="op">^</span> <span class="op">(</span></span>
+<span>  <span class="va">dat</span><span class="op">$</span><span class="va">zipf_frequency</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">zipf_frequency</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">type_frequency</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span></span>
-<span>  <span class="va">frequency</span> <span class="op">~</span> <span class="va">word</span>,</span>
+<span>  <span class="va">frequency_weight</span> <span class="op">~</span> <span class="va">word</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
 <span>  FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">word_frequency</span> <span class="op">&lt;-</span> <span class="va">type_frequency</span><span class="op">$</span><span class="va">frequency</span><span class="op">[</span></span>
+<span><span class="va">word_frequency</span> <span class="op">&lt;-</span> <span class="va">type_frequency</span><span class="op">$</span><span class="va">frequency_weight</span><span class="op">[</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">words</span>, <span class="va">type_frequency</span><span class="op">$</span><span class="va">word</span><span class="op">)</span></span>
 <span><span class="op">]</span></span>
 <span></span>
@@ -562,7 +644,284 @@ reproduced, and why?</p>
 <div class="section level2">
 <h2 id="using-ldl-measures-in-regression-analysis">6. Using LDL measures in regression analysis<a class="anchor" aria-label="anchor" href="#using-ldl-measures-in-regression-analysis"></a>
 </h2>
-<p><em>This section will be added later.</em></p>
+<p>LDL measures can be added to a statistical model of behavioural
+observations. Here, the dependent variable is self-paced reading time in
+milliseconds. The analysis proceeds cumulatively:</p>
+<ol style="list-style-type: decimal">
+<li>a <strong>basic model</strong> contains participant
+characteristics;</li>
+<li>a <strong>linguistic model</strong> adds established lexical
+predictors; and</li>
+<li>an <strong>LDL model</strong> adds theoretically selected LDL
+measures.</li>
+</ol>
+<p>This ordering asks whether lexical variables improve on the basic
+model and whether LDL measures provide information beyond those lexical
+variables.</p>
+<blockquote>
+<p><strong>Important:</strong> Choose LDL predictors for theoretical
+reasons before looking at their p-values. Trying every available measure
+and retaining only the significant ones would make the reported evidence
+too optimistic.</p>
+</blockquote>
+<div class="section level3">
+<h3 id="prepare-the-data">6.1 Prepare the data<a class="anchor" aria-label="anchor" href="#prepare-the-data"></a>
+</h3>
+<p>The LDL table has one row per word type, whereas <code>dat</code> has
+many token-level observations per word. The merge therefore attaches the
+same type-level LDL values to every occurrence of that word.</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lme4/lme4/" class="external-link">lme4</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/runehaubo/lmerTestR" class="external-link">lmerTest</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Use the in-memory table created in Section 2. Reading the scalar CSV instead</span></span>
+<span><span class="co"># would also work:</span></span>
+<span><span class="co"># ldl_measures &lt;- read.csv("scalar_ldl_measures.csv")</span></span>
+<span><span class="va">ldl_measures</span> <span class="op">&lt;-</span> <span class="va">scalar_ldl_measures</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ldl_measures</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ldl_measures</span><span class="op">)</span> <span class="op">==</span> <span class="st">"item"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"word"</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span></span>
+<span>  <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/duplicated.html" class="external-link">anyDuplicated</a></span><span class="op">(</span><span class="va">ldl_measures</span><span class="op">$</span><span class="va">word</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">ldl_measures</span><span class="op">$</span><span class="va">word</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">dat</span><span class="op">$</span><span class="va">word</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Scale every usable numeric scalar measure. Scaling gives each measure a mean</span></span>
+<span><span class="co"># of zero and a standard deviation of one, making coefficients easier to</span></span>
+<span><span class="co"># compare. Constant columns cannot be scaled and are excluded.</span></span>
+<span><span class="va">numeric_measures</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ldl_measures</span><span class="op">)</span><span class="op">[</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="va">ldl_measures</span>, <span class="va">is.numeric</span>, <span class="fu"><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">scalable_measures</span> <span class="op">&lt;-</span> <span class="va">numeric_measures</span><span class="op">[</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span></span>
+<span>    <span class="va">ldl_measures</span><span class="op">[</span><span class="va">numeric_measures</span><span class="op">]</span>,</span>
+<span>    <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">observed</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/is.finite.html" class="external-link">is.finite</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">]</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">observed</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1L</span> <span class="op">&amp;&amp;</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">observed</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span></span>
+<span>    <span class="op">}</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">scaled_measures</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">ldl_measures</span><span class="op">[</span><span class="va">scalable_measures</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">scaled_measures</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">scalable_measures</span>, <span class="st">"_scaled"</span><span class="op">)</span></span>
+<span><span class="va">ldl_measures</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">ldl_measures</span>, <span class="va">scaled_measures</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">dat_reg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span></span>
+<span>  <span class="va">dat</span>,</span>
+<span>  <span class="va">ldl_measures</span>,</span>
+<span>  by <span class="op">=</span> <span class="st">"word"</span>,</span>
+<span>  all <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  sort <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Remove impossible and exceptionally long responses before taking logs.</span></span>
+<span><span class="va">dat_reg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">dat_reg</span>, <span class="fu"><a href="https://rdrr.io/r/base/is.finite.html" class="external-link">is.finite</a></span><span class="op">(</span><span class="va">RT</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">RT</span> <span class="op">&gt;</span> <span class="fl">0</span> <span class="op">&amp;</span> <span class="va">RT</span> <span class="op">&lt;=</span> <span class="fl">8000</span><span class="op">)</span></span>
+<span><span class="va">dat_reg</span><span class="op">$</span><span class="va">RT_log</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">dat_reg</span><span class="op">$</span><span class="va">RT</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Mark grouping and categorical predictors explicitly as factors.</span></span>
+<span><span class="va">dat_reg</span><span class="op">$</span><span class="va">participant_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">dat_reg</span><span class="op">$</span><span class="va">participant_id</span><span class="op">)</span></span>
+<span><span class="va">dat_reg</span><span class="op">$</span><span class="va">word</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">dat_reg</span><span class="op">$</span><span class="va">word</span><span class="op">)</span></span>
+<span><span class="va">dat_reg</span><span class="op">$</span><span class="va">sex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">dat_reg</span><span class="op">$</span><span class="va">sex</span><span class="op">)</span></span>
+<span><span class="va">dat_reg</span><span class="op">$</span><span class="va">handedness</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">dat_reg</span><span class="op">$</span><span class="va">handedness</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">dat_reg</span><span class="op">$</span><span class="va">RT</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dat_reg</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nlevels.html" class="external-link">nlevels</a></span><span class="op">(</span><span class="va">dat_reg</span><span class="op">$</span><span class="va">participant_id</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nlevels.html" class="external-link">nlevels</a></span><span class="op">(</span><span class="va">dat_reg</span><span class="op">$</span><span class="va">word</span><span class="op">)</span></span></code></pre></div>
+<p>The log transformation makes multiplicative differences in reading
+time additive in the model. After exponentiation, a predicted value is
+again on the millisecond scale.</p>
+<blockquote>
+<p><strong>Task 7.</strong> Compare the number of rows before and after
+filtering. Inspect the excluded observations and explain why the
+filtering rule should be documented in a report.</p>
+</blockquote>
+</div>
+<div class="section level3">
+<h3 id="fit-a-basic-model">6.2 Fit a basic model<a class="anchor" aria-label="anchor" href="#fit-a-basic-model"></a>
+</h3>
+<p>The basic model controls for age, sex, and handedness. Random
+intercepts allow participants to differ in their general response speed
+and words to differ in their general difficulty.</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mdl_basic</span> <span class="op">&lt;-</span> <span class="fu">lmer</span><span class="op">(</span></span>
+<span>  <span class="va">RT_log</span> <span class="op">~</span></span>
+<span>    <span class="va">age_years</span> <span class="op">+</span></span>
+<span>    <span class="va">sex</span> <span class="op">+</span></span>
+<span>    <span class="va">handedness</span> <span class="op">+</span></span>
+<span>    <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">word</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">participant_id</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">dat_reg</span>,</span>
+<span>  REML <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mdl_basic</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova</a></span><span class="op">(</span><span class="va">mdl_basic</span><span class="op">)</span></span></code></pre></div>
+<p><code>REML = FALSE</code> fits by maximum likelihood, which is needed
+when models with different fixed effects are compared.</p>
+</div>
+<div class="section level3">
+<h3 id="add-established-linguistic-predictors">6.3 Add established linguistic predictors<a class="anchor" aria-label="anchor" href="#add-established-linguistic-predictors"></a>
+</h3>
+<p>The linguistic model adds Zipf frequency and word length. Higher Zipf
+values mean more frequent words; <code>word_length</code> is measured in
+letters.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mdl_ling</span> <span class="op">&lt;-</span> <span class="fu">lmer</span><span class="op">(</span></span>
+<span>  <span class="va">RT_log</span> <span class="op">~</span></span>
+<span>    <span class="va">age_years</span> <span class="op">+</span></span>
+<span>    <span class="va">sex</span> <span class="op">+</span></span>
+<span>    <span class="va">handedness</span> <span class="op">+</span></span>
+<span>    <span class="va">zipf_frequency</span> <span class="op">+</span></span>
+<span>    <span class="va">word_length</span> <span class="op">+</span></span>
+<span>    <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">word</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">participant_id</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">dat_reg</span>,</span>
+<span>  REML <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mdl_ling</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova</a></span><span class="op">(</span><span class="va">mdl_ling</span><span class="op">)</span></span></code></pre></div>
+<blockquote>
+<p><strong>Task 8.</strong> Determine the estimated directions of the
+frequency and length effects. Do they agree with the expectations that
+frequent words are read faster and longer words more slowly?</p>
+</blockquote>
+</div>
+<div class="section level3">
+<h3 id="add-ldl-measures">6.4 Add LDL measures<a class="anchor" aria-label="anchor" href="#add-ldl-measures"></a>
+</h3>
+<p>The LDL model adds five preselected measures. Their
+<code>_scaled</code> suffix means that a one-unit change is a
+one-standard-deviation change in the original measure.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mdl_ldl</span> <span class="op">&lt;-</span> <span class="fu">lmer</span><span class="op">(</span></span>
+<span>  <span class="va">RT_log</span> <span class="op">~</span></span>
+<span>    <span class="va">age_years</span> <span class="op">+</span></span>
+<span>    <span class="va">sex</span> <span class="op">+</span></span>
+<span>    <span class="va">handedness</span> <span class="op">+</span></span>
+<span>    <span class="va">zipf_frequency</span> <span class="op">+</span></span>
+<span>    <span class="va">word_length</span> <span class="op">+</span></span>
+<span>    <span class="va">comprehension_l2_scaled</span> <span class="op">+</span></span>
+<span>    <span class="va">comprehension_semantic_density_scaled</span> <span class="op">+</span></span>
+<span>    <span class="va">comprehension_target_correlation_scaled</span> <span class="op">+</span></span>
+<span>    <span class="va">production_uncertainty_scaled</span> <span class="op">+</span></span>
+<span>    <span class="va">production_semantic_support_for_form_scaled</span> <span class="op">+</span></span>
+<span>    <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">word</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">participant_id</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">dat_reg</span>,</span>
+<span>  REML <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mdl_ldl</span><span class="op">)</span></span>
+<span><span class="va">ldl_tests</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova</a></span><span class="op">(</span><span class="va">mdl_ldl</span><span class="op">)</span></span>
+<span><span class="va">ldl_tests</span></span></code></pre></div>
+<p>Interpret an LDL coefficient conditionally: it describes the
+association with reading time while the other predictors in this model
+are held constant. A coefficient alone does not establish a causal
+process.</p>
+</div>
+<div class="section level3">
+<h3 id="compare-the-models">6.5 Compare the models<a class="anchor" aria-label="anchor" href="#compare-the-models"></a>
+</h3>
+<p>All three models were fitted to the same rows and use maximum
+likelihood, so their fit can be compared.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/AIC.html" class="external-link">AIC</a></span><span class="op">(</span><span class="va">mdl_basic</span>, <span class="va">mdl_ling</span>, <span class="va">mdl_ldl</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova</a></span><span class="op">(</span><span class="va">mdl_basic</span>, <span class="va">mdl_ling</span>, <span class="va">mdl_ldl</span><span class="op">)</span></span></code></pre></div>
+<p>Smaller AIC values indicate a better trade-off between fit and
+complexity. The likelihood-ratio comparisons ask whether each larger
+model improves fit enough to justify its additional parameters. Also
+inspect the size and direction of individual coefficients; a
+statistically detectable effect need not be large or theoretically
+important.</p>
+<blockquote>
+<p><strong>Task 9.</strong> Which model has the smallest AIC? Do the
+likelihood-ratio tests lead to the same ordering? Compare the
+coefficients shared by all models: do their estimates remain stable as
+predictors are added?</p>
+</blockquote>
+</div>
+<div class="section level3">
+<h3 id="plot-ldl-effects">6.6 Plot LDL effects<a class="anchor" aria-label="anchor" href="#plot-ldl-effects"></a>
+</h3>
+<p>In these data, inspect <code>ldl_tests</code> before deciding which
+effects warrant a plot. The helper below creates fixed-effect
+predictions while holding numeric covariates at their means, factors at
+their first level, and all other scaled LDL measures at zero. Random
+effects are omitted, so the curves describe the population-level
+model.</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">plot_ldl_effect</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">model</span>, <span class="va">data</span>, <span class="va">predictor</span>, <span class="va">points</span> <span class="op">=</span> <span class="fl">100L</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="va">predictor</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="va">reference</span> <span class="op">&lt;-</span> <span class="va">data</span><span class="op">[</span><span class="fl">1</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span>  <span class="va">reference</span><span class="op">$</span><span class="va">age_years</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">age_years</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="va">reference</span><span class="op">$</span><span class="va">zipf_frequency</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">zipf_frequency</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="va">reference</span><span class="op">$</span><span class="va">word_length</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">word_length</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="va">reference</span><span class="op">$</span><span class="va">sex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">sex</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">sex</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">reference</span><span class="op">$</span><span class="va">handedness</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">handedness</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
+<span>    levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">handedness</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span>  <span class="va">ldl_scaled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span></span>
+<span>    <span class="st">"^(comprehension|production)_.*_scaled$"</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">reference</span><span class="op">)</span>,</span>
+<span>    value <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  <span class="op">)</span></span>
+<span>  <span class="va">reference</span><span class="op">[</span><span class="va">ldl_scaled</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
+<span></span>
+<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">data</span><span class="op">[[</span><span class="va">predictor</span><span class="op">]</span><span class="op">]</span>, <span class="fl">0.025</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">data</span><span class="op">[[</span><span class="va">predictor</span><span class="op">]</span><span class="op">]</span>, <span class="fl">0.975</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>    length.out <span class="op">=</span> <span class="va">points</span></span>
+<span>  <span class="op">)</span></span>
+<span>  <span class="va">newdata</span> <span class="op">&lt;-</span> <span class="va">reference</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">points</span><span class="op">)</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span>  <span class="va">newdata</span><span class="op">[[</span><span class="va">predictor</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">x</span></span>
+<span>  <span class="va">newdata</span><span class="op">$</span><span class="va">predicted_RT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span></span>
+<span>    <span class="va">model</span>,</span>
+<span>    newdata <span class="op">=</span> <span class="va">newdata</span>,</span>
+<span>    re.form <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>    allow.new.levels <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  <span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="va">newdata</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">.data</span><span class="op">[[</span><span class="va">predictor</span><span class="op">]</span><span class="op">]</span>, y <span class="op">=</span> <span class="va">predicted_RT</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_line</span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">labs</span><span class="op">(</span></span>
+<span>      x <span class="op">=</span> <span class="va">predictor</span>,</span>
+<span>      y <span class="op">=</span> <span class="st">"Predicted reading time (ms)"</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>For the current analysis, comprehension L2 and production semantic
+support for form are the LDL measures showing evidence of an effect.
+Plot them as follows:</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">plot_ldl_effect</span><span class="op">(</span></span>
+<span>  <span class="va">mdl_ldl</span>,</span>
+<span>  <span class="va">dat_reg</span>,</span>
+<span>  <span class="st">"comprehension_l2_scaled"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">plot_ldl_effect</span><span class="op">(</span></span>
+<span>  <span class="va">mdl_ldl</span>,</span>
+<span>  <span class="va">dat_reg</span>,</span>
+<span>  <span class="st">"production_semantic_support_for_form_scaled"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>These plots show model-adjusted associations rather than raw
+correlations. The first asks how predicted reading time changes with
+semantic prediction error; the second asks how it changes as the
+predicted form receives greater support from the semantic vector.</p>
+<blockquote>
+<p><strong>Task 10.</strong> Describe each curve without using the words
+“significant” or “non-significant.” State its direction, approximate
+size across the displayed range, and a cautious linguistic
+interpretation.</p>
+</blockquote>
+</div>
 </div>
 <div class="section level2">
 <h2 id="what-you-should-now-be-able-to-do">What you should now be able to do<a class="anchor" aria-label="anchor" href="#what-you-should-now-be-able-to-do"></a>
@@ -571,10 +930,12 @@ reproduced, and why?</p>
 <strong>S</strong>, <strong>F</strong>, <strong>G</strong>,
 <strong>S-hat</strong>, and <strong>C-hat</strong> represent; fit
 comprehension and production mappings; compute and diagnose measures;
-combine the measures in one clearly named data frame; and distinguish
-end-state, frequency-informed, and incremental learning. The path
-extension is a separate, potentially very expensive step and is not
-required for analyses that stop at predicted cue support.</p>
+combine the measures in one clearly named data frame; distinguish
+end-state, frequency-informed, and incremental learning; and test
+whether selected LDL measures improve a regression analysis beyond basic
+and established linguistic predictors. The path extension is a separate,
+potentially very expensive step and is not required for analyses that
+stop at predicted cue support.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
