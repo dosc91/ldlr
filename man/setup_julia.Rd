@@ -14,4 +14,4 @@ ldlr_status(julia = NULL)
 }
 \value{A status list, invisibly for \code{setup_julia()}.}
 \description{Locate Julia, activate an isolated ldlr environment, install dependencies, load the adapter, and run a smoke test.}
-\details{The workflow is controlled from R and requires no Julia syntax. It installs Julia when requested, manages a package-specific Julia environment, loads JudiLing and the ldlr backend, and tests the connection with a small call to \code{JudiLing.make_transform_matrix()}. \code{ldlr_status()} performs R-side discovery and reports the selected executable and environment.}
+\details{The workflow is controlled from R and requires no Julia syntax. It installs Julia 1.12 when requested, manages a package-specific Julia environment, loads JudiLing and the ldlr backend, and tests the connection with a small call to \code{JudiLing.make_transform_matrix()}. Julia 1.13 is currently rejected because JudiLing 1 does not declare compatibility with it. \code{ldlr_status()} performs R-side discovery and reports the selected executable, version, compatibility, and environment.}

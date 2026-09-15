@@ -4,3 +4,5 @@
 ^pkgdown$
 ^docs$
 ^\.r-lib$
+^CONTRIBUTING\.md$
+^LICENSE\.md$

@@ -27,7 +27,7 @@ ldlr_status()
 ```
 
 The first call may take several minutes. In R, `setup_julia()` locates or
-installs Julia, creates a package-specific environment, installs JudiLing and
+installs Julia 1.12, creates a package-specific environment, installs JudiLing and
 its dependencies, starts the Julia connection, loads `LDLRBackend`, and runs a
 small mapping test. No Julia commands are required. Later sessions normally
 only need `library(ldlr)`; a backend call starts Julia when needed.
@@ -135,4 +135,3 @@ restored <- load_ldlr_model("comprehension.rds")
 
 The stored object is ordinary R data. Loading or inspecting it does not require
 Julia; Julia is needed again only when a new backend calculation is requested.
-

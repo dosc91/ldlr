@@ -1,6 +1,22 @@
 .ldlr_backend <- new.env(parent = emptyenv())
 .ldlr_backend$ready <- FALSE
 .ldlr_backend$module <- NULL
+.ldlr_julia_install_version <- "1.12.7"
+
+.ldlr_julia_version <- function(path) {
+  if (is.null(path) || !length(path) || !file.exists(path)) return(NA_character_)
+  output <- tryCatch(
+    suppressWarnings(system2(path, "--version", stdout = TRUE, stderr = TRUE)),
+    error = function(e) character()
+  )
+  match <- regexpr("[0-9]+\\.[0-9]+(?:\\.[0-9]+)?", paste(output, collapse = " "), perl = TRUE)
+  if (match[[1L]] < 0L) return(NA_character_)
+  regmatches(paste(output, collapse = " "), match)
+}
+
+.ldlr_julia_is_compatible <- function(version) {
+  !is.na(version) && utils::compareVersion(version, "1.13.0") < 0L
+}
 
 .ldlr_julia_path <- function(julia = NULL) {
   homes <- unique(c(
@@ -43,6 +59,9 @@
     )]
   }
   if (!length(candidates)) return(NULL)
+  versions <- vapply(candidates, .ldlr_julia_version, character(1L))
+  compatible <- vapply(versions, .ldlr_julia_is_compatible, logical(1L))
+  if (any(compatible)) return(candidates[compatible][[1L]])
   candidates[[1L]]
 }
 
@@ -55,9 +74,12 @@
 #' @export
 ldlr_status <- function(julia = NULL) {
   path <- .ldlr_julia_path(julia)
+  version <- .ldlr_julia_version(path)
   list(
     julia_found = !is.null(path) && file.exists(path),
     julia = path,
+    julia_version = version,
+    julia_compatible = .ldlr_julia_is_compatible(version),
     connector_available = requireNamespace("JuliaConnectoR", quietly = TRUE),
     backend_ready = isTRUE(.ldlr_backend$ready)
   )
@@ -87,11 +109,26 @@ setup_julia <- function(julia = NULL, install_julia = interactive(),
         "Install it first, or install Julia with Juliaup and supply its executable path."
       )
     }
-    JuliaCall::install_julia()
-    path <- .ldlr_julia_path(julia)
+    prefix <- file.path(tools::R_user_dir("ldlr", "data"), "julia")
+    JuliaCall::install_julia(version = .ldlr_julia_install_version, prefix = prefix)
+    executable <- if (.Platform$OS.type == "windows") "julia.exe" else "julia"
+    installed_path <- file.path(
+      prefix, .ldlr_julia_install_version,
+      paste0("julia-", .ldlr_julia_install_version), "bin", executable
+    )
+    path <- if (file.exists(installed_path)) installed_path else .ldlr_julia_path(julia)
     if (is.null(path) || !file.exists(path)) {
       .ldlr_stop("Julia was installed but its executable was not detected. Supply its path in `setup_julia(julia = ...)`.")
     }
+  }
+
+  version <- .ldlr_julia_version(path)
+  if (!.ldlr_julia_is_compatible(version)) {
+    version_label <- if (is.na(version)) "of unknown version" else version
+    .ldlr_stop(
+      "JudiLing 1 is not compatible with Julia ", version_label,
+      ". Install Julia 1.12, or let `setup_julia(install_julia = TRUE)` install the supported version."
+    )
   }
 
   Sys.setenv(JULIA_BINDIR = dirname(path))

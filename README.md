@@ -28,7 +28,8 @@ ldlr_status()
 ```
 
 `setup_julia()` can install Julia, creates an isolated Julia environment for
-`ldlr`, and installs the required Julia packages. If automatic detection fails,
+`ldlr`, and installs the required Julia packages. Automatic installation uses
+Julia 1.12, the newest line currently compatible with JudiLing 1. If automatic detection fails,
 pass the Julia executable explicitly:
 
 ```r
