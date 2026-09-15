@@ -25,7 +25,10 @@ jobs:
         with:
           extra-packages: any::pkgdown, local::.
           needs: website
+      - name: Configure deployment identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
       - name: Build and deploy site
         run: pkgdown::deploy_to_branch(new_process = FALSE)
         shell: Rscript {0}
-
