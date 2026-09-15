@@ -7,7 +7,7 @@ Authors@R: person(
     email = "dominic.schmitz@uni-duesseldorf.de",
     role = c("aut", "cre")
     )
-URL: https://github.com/dosc91/ldlr
+URL: https://dosc91.github.io/ldlr/, https://github.com/dosc91/ldlr
 BugReports: https://github.com/dosc91/ldlr/issues
 Description: A tidy and explicit R interface for fitting Linear Discriminative
     Learning comprehension and production mappings. Computationally intensive

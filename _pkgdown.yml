@@ -41,6 +41,8 @@ articles:
 - title: Technical details
   contents: [julia-backend, troubleshooting]
 reference:
+- title: Package overview
+  contents: [ldlr-package]
 - title: Setup and data input
   contents: [setup_julia, ldlr_status, load_fasttext_vectors]
 - title: Cue matrices
