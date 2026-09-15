@@ -851,7 +851,7 @@ predictors are added?</p>
 effects warrant a plot. The helper below creates fixed-effect
 predictions while holding numeric covariates at their means, factors at
 their first level, and all other scaled LDL measures at zero. Random
-effects are omitted, so the curves describe the population-level
+effects are omitted, so the lines describe the population-level
 model.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plot_ldl_effect</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">model</span>, <span class="va">data</span>, <span class="va">predictor</span>, <span class="va">points</span> <span class="op">=</span> <span class="fl">100L</span><span class="op">)</span> <span class="op">{</span></span>
@@ -890,6 +890,10 @@ model.</p>
 <span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="va">newdata</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">.data</span><span class="op">[[</span><span class="va">predictor</span><span class="op">]</span><span class="op">]</span>, y <span class="op">=</span> <span class="va">predicted_RT</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu">geom_line</span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">scale_y_continuous</span><span class="op">(</span></span>
+<span>      limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
+<span>      expand <span class="op">=</span> <span class="fu">expansion</span><span class="op">(</span>mult <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu">labs</span><span class="op">(</span></span>
 <span>      x <span class="op">=</span> <span class="va">predictor</span>,</span>
 <span>      y <span class="op">=</span> <span class="st">"Predicted reading time (ms)"</span></span>
@@ -916,7 +920,7 @@ correlations. The first asks how predicted reading time changes with
 semantic prediction error; the second asks how it changes as the
 predicted form receives greater support from the semantic vector.</p>
 <blockquote>
-<p><strong>Task 10.</strong> Describe each curve without using the words
+<p><strong>Task 10.</strong> Describe each line without using the words
 “significant” or “non-significant.” State its direction, approximate
 size across the displayed range, and a cautious linguistic
 interpretation.</p>

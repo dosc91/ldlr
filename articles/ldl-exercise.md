@@ -755,7 +755,7 @@ In these data, inspect `ldl_tests` before deciding which effects warrant
 a plot. The helper below creates fixed-effect predictions while holding
 numeric covariates at their means, factors at their first level, and all
 other scaled LDL measures at zero. Random effects are omitted, so the
-curves describe the population-level model.
+lines describe the population-level model.
 
 ``` r
 
@@ -795,6 +795,10 @@ plot_ldl_effect <- function(model, data, predictor, points = 100L) {
 
   ggplot(newdata, aes(x = .data[[predictor]], y = predicted_RT)) +
     geom_line(linewidth = 1) +
+    scale_y_continuous(
+      limits = c(0, NA),
+      expand = expansion(mult = c(0, 0.05))
+    ) +
     labs(
       x = predictor,
       y = "Predicted reading time (ms)"
@@ -827,7 +831,7 @@ correlations. The first asks how predicted reading time changes with
 semantic prediction error; the second asks how it changes as the
 predicted form receives greater support from the semantic vector.
 
-> **Task 10.** Describe each curve without using the words “significant”
+> **Task 10.** Describe each line without using the words “significant”
 > or “non-significant.” State its direction, approximate size across the
 > displayed range, and a cautious linguistic interpretation.
 
