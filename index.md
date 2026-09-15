@@ -1,5 +1,7 @@
 # ldlr
 
+![ldlr logo](reference/figures/logo.png)
+
 `ldlr` is an R interface for Linear Discriminative Learning (LDL). It
 keeps data preparation, validation, model objects, diagnostics, and
 reporting in R, while delegating computationally intensive operations to
