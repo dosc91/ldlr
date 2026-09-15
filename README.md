@@ -1,6 +1,10 @@
 # ldlr
 
+<img src="man/figures/logo.png" align="right" height="144" alt="ldlr logo" />
+
 <!-- badges: start -->
+[![Version](https://img.shields.io/badge/version-0.0.1-FFA70B.svg)](https://github.com/dosc91/ldlr)
+[![GitHub last commit](https://img.shields.io/github/last-commit/dosc91/ldlr)](https://github.com/dosc91/ldlr/commits/main)
 [![R-CMD-check](https://github.com/dosc91/ldlr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/dosc91/ldlr/actions/workflows/R-CMD-check.yaml)
 [![pkgdown](https://github.com/dosc91/ldlr/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/dosc91/ldlr/actions/workflows/pkgdown.yaml)
 <!-- badges: end -->
