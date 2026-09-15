@@ -4,6 +4,8 @@
 
 - [Getting started with
   ldlr](https://dosc91.github.io/ldlr/articles/getting-started.md):
+- [Exercise: a complete LDL
+  analysis](https://dosc91.github.io/ldlr/articles/ldl-exercise.md):
 
 ### Analysis
 
