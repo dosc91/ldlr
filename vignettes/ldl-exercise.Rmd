@@ -291,15 +291,78 @@ all_ldl_measures <- data.frame(
 dim(all_ldl_measures)
 head(all_ldl_measures)
 
+# Identify measures that contain more than one value per lexical item.
+list_columns <- names(all_ldl_measures)[
+  vapply(all_ldl_measures, is.list, logical(1L))
+]
+list_columns
+```
+
+Some cue-dependent measures are **list-columns**. For example, functional load
+contains one value for every cue in a word, so different rows can contain
+vectors of different lengths. This is valid inside an R data frame, but the CSV
+format cannot represent such vectors as numeric values in a single cell.
+
+Save the complete object as an RDS file. This preserves every scalar and every
+cue-level vector exactly and can be read back with `readRDS()`.
+
+```{r save-complete-measures}
+saveRDS(all_ldl_measures, file = "all_ldl_measures.rds")
+
+# Check that the saved object is identical to the original.
+all_ldl_measures_reloaded <- readRDS("all_ldl_measures.rds")
+stopifnot(identical(all_ldl_measures, all_ldl_measures_reloaded))
+```
+
+For a conventional CSV with exactly one scalar value per item and column,
+exclude list-columns explicitly:
+
+```{r save-scalar-measures}
+scalar_ldl_measures <- all_ldl_measures[
+  !vapply(all_ldl_measures, is.list, logical(1L))
+]
+
 write.csv(
-  all_ldl_measures,
-  file = "all_ldl_measures.csv",
+  scalar_ldl_measures,
+  file = "scalar_ldl_measures.csv",
   row.names = FALSE
 )
 ```
 
-> **Task 4.** Open the saved CSV and identify one comprehension measure and one
-> production measure. Why are the prefixes important?
+If cue-level functional load is needed in CSV format, store it as a **long**
+table: one row per item and cue. This preserves the numeric values instead of
+turning a vector into text such as `c(0.32, 0.17, ...)`.
+
+```{r save-functional-load}
+functional_load_long <- do.call(
+  rbind,
+  lapply(seq_along(words), function(i) {
+    values <- comprehension_measures$functional_load[[i]]
+    data.frame(
+      item = comprehension_measures$item[i],
+      cue = cues$paths[[i]],
+      cue_position = seq_along(values),
+      functional_load = as.numeric(values),
+      stringsAsFactors = FALSE
+    )
+  })
+)
+
+rownames(functional_load_long) <- NULL
+head(functional_load_long)
+
+write.csv(
+  functional_load_long,
+  file = "comprehension_functional_load.csv",
+  row.names = FALSE
+)
+```
+
+> **Task 4.** Open `scalar_ldl_measures.csv` and identify one comprehension
+> measure and one production measure. Then inspect
+> `comprehension_functional_load.csv`: how many rows belong to the first word,
+> and how does that number relate to its trigrams? Why are both the direction
+> prefixes and the long cue-level format important?
 
 # 3. Path extension: from C-hat to a word form
 
@@ -448,4 +511,3 @@ diagnose measures; combine the measures in one clearly named data frame; and
 distinguish end-state, frequency-informed, and incremental learning. The path
 extension is a separate, potentially very expensive step and is not required
 for analyses that stop at predicted cue support.
-
