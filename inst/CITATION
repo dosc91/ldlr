@@ -1,0 +1,9 @@
+bibentry(
+  bibtype = "Manual",
+  title = "ldlr: Linear Discriminative Learning from R",
+  author = person("Dominic", "Schmitz"),
+  year = "2026",
+  note = "R package version 0.0.1",
+  url = "https://github.com/dosc91/ldlr"
+)
+

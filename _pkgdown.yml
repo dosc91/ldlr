@@ -1,0 +1,59 @@
+url: https://dosc91.github.io/ldlr/
+template:
+  bootstrap: 5
+  bslib:
+    primary: "#355C7D"
+    secondary: "#6C8EAD"
+    base_font: {google: "Source Sans 3"}
+    heading_font: {google: "Source Sans 3"}
+home:
+  title: Linear Discriminative Learning from R
+  description: >
+    A transparent R interface to Linear Discriminative Learning with
+    computationally intensive operations delegated to JudiLing.jl.
+navbar:
+  structure:
+    left: [intro, articles, reference, news]
+    right: [search, github]
+  components:
+    intro:
+      text: Get started
+      href: articles/getting-started.html
+    articles:
+      text: Guides
+      menu:
+      - text: Learning methods
+        href: articles/learning-methods.html
+      - text: Measures and diagnostics
+        href: articles/measures-and-diagnostics.html
+      - text: Evaluation and cross-validation
+        href: articles/cross-validation.html
+      - text: R and Julia architecture
+        href: articles/julia-backend.html
+      - text: Troubleshooting
+        href: articles/troubleshooting.html
+articles:
+- title: Start here
+  navbar: ~
+  contents: [getting-started]
+- title: Analysis
+  contents: [learning-methods, measures-and-diagnostics, cross-validation]
+- title: Technical details
+  contents: [julia-backend, troubleshooting]
+reference:
+- title: Setup and data input
+  contents: [setup_julia, ldlr_status, load_fasttext_vectors]
+- title: Cue matrices
+  contents: [make_ortho_trigrams, make_combined_ortho_trigrams]
+- title: Comprehension and production
+  contents: [compute_comprehension, compute_production, save_ldlr_model, load_ldlr_model]
+- title: Evaluation and cross-validation
+  contents: [compute_comprehension_loo, compute_production_loo, compute_comprehension_cv, compute_production_cv, print.ldlr_cv, summary.ldlr_cv, as.data.frame.ldlr_cv, fitted.ldlr_cv]
+- title: Measures and diagnostics
+  contents: [available_measures, compute_measures, check_measure_values]
+- title: Word-form paths
+  contents: [produce_forms]
+footer:
+  structure:
+    left: developed_by
+    right: built_with

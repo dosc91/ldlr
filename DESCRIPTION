@@ -1,0 +1,36 @@
+Package: ldlr
+Title: Linear Discriminative Learning from R
+Version: 0.0.1
+Authors@R: person(
+    given = "Dominic",
+    family = "Schmitz",
+    email = "dominic.schmitz@uni-duesseldorf.de",
+    role = c("aut", "cre")
+    )
+URL: https://github.com/dosc91/ldlr
+BugReports: https://github.com/dosc91/ldlr/issues
+Description: A tidy and explicit R interface for fitting Linear Discriminative
+    Learning comprehension and production mappings. Computationally intensive
+    operations are delegated to Julia and JudiLing without requiring users to
+    write Julia code.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.1.0)
+Imports:
+    data.table,
+    JuliaConnectoR,
+    stats,
+    tools,
+    utils
+Suggests:
+    knitr,
+    JuliaCall,
+    Matrix,
+    pkgdown,
+    rmarkdown,
+    remotes,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Config/testthat/edition: 3

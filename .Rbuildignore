@@ -1,0 +1,6 @@
+^\.github$
+^README\.Rmd$
+^_pkgdown\.yml$
+^pkgdown$
+^docs$
+^\.r-lib$
