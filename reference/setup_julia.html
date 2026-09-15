@@ -72,7 +72,7 @@
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The workflow is controlled from R and requires no Julia syntax. It installs Julia when requested, manages a package-specific Julia environment, loads JudiLing and the ldlr backend, and tests the connection with a small call to <code>JudiLing.make_transform_matrix()</code>. <code>ldlr_status()</code> performs R-side discovery and reports the selected executable and environment.</p>
+    <p>The workflow is controlled from R and requires no Julia syntax. It installs Julia 1.12 when requested, manages a package-specific Julia environment, loads JudiLing and the ldlr backend, and tests the connection with a small call to <code>JudiLing.make_transform_matrix()</code>. Julia 1.13 is currently rejected because JudiLing 1 does not declare compatibility with it. <code>ldlr_status()</code> performs R-side discovery and reports the selected executable, version, compatibility, and environment.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

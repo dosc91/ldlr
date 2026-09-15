@@ -32,8 +32,10 @@ A status list, invisibly for `setup_julia()`.
 ## Details
 
 The workflow is controlled from R and requires no Julia syntax. It
-installs Julia when requested, manages a package-specific Julia
+installs Julia 1.12 when requested, manages a package-specific Julia
 environment, loads JudiLing and the ldlr backend, and tests the
 connection with a small call to `JudiLing.make_transform_matrix()`.
-`ldlr_status()` performs R-side discovery and reports the selected
-executable and environment.
+Julia 1.13 is currently rejected because JudiLing 1 does not declare
+compatibility with it. `ldlr_status()` performs R-side discovery and
+reports the selected executable, version, compatibility, and
+environment.

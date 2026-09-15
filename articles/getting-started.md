@@ -19,7 +19,7 @@ ldlr_status()
 
 The first call may take several minutes. In R,
 [`setup_julia()`](https://dosc91.github.io/ldlr/reference/setup_julia.md)
-locates or installs Julia, creates a package-specific environment,
+locates or installs Julia 1.12, creates a package-specific environment,
 installs JudiLing and its dependencies, starts the Julia connection,
 loads `LDLRBackend`, and runs a small mapping test. No Julia commands
 are required. Later sessions normally only need
